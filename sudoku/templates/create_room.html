@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load tailwind_filters %}
+
+{% block create_room %}
+<div class="flex flex-row min-h-screen justify-center items-center">
+  <div class="bg-slate-300 w-[450px] px-10 py-5 rounded-lg">
+    <form method="post">
+      {% csrf_token %} {{ form|crispy }}
+      <div class="flex justify-between items-center">
+        <button class="bg-blue-500 text-white rounded-md px-5 py-3" type="submit">Create Room</button> 
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock create_room %}

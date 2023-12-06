@@ -1,0 +1,21 @@
+.tile {
+  border: 1px solid black;
+  border-color: black !important; 
+}
+
+.tile:first-child {
+  border-left: solid;
+}
+
+.tile:nth-child(3n) {
+  border-right: solid;
+}
+
+
+.third .tile {
+  border-top: solid;
+}
+
+.last .tile {
+  border-bottom: solid;
+}
