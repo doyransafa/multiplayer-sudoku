@@ -8,8 +8,10 @@
 - Attend rooms and play realtime Sudoku with other users.
 - Live chat with users in same room.
 
-### Video Demo
+## Video Demo
+### [YouTube Link]( https://youtu.be/9Xtj5zKnvnM )
 
+<img width="721" alt="image" src="https://github.com/doyransafa/multiplayer-sudoku/assets/72417108/e6f1a861-c24b-4be1-a153-05b3562ba50a">
 
 
 ## Build Steps
