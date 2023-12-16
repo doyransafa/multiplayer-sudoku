@@ -1,0 +1,35 @@
+services:
+  
+  redis:
+    image: redis:7.2.3-alpine
+  
+  django:
+    build: .
+    command: >
+            sh -c " python3 manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports: 
+      - 8001:8000
+    depends_on:
+      - redis
+
+  celery:
+    build: .
+    command: celery -A app worker -l INFO 
+    volumes:
+      - .:/app
+    environment:
+      - BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+  
+  celery-beat:
+    build: .
+    command: celery -A app beat -l debug 
+    volumes:
+      - .:/app
+    environment:
+      - BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - redis

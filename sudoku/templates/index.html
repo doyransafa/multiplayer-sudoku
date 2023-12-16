@@ -21,7 +21,10 @@
               <p class="rounded-full bg-red-500 inline-block text-sm text-white px-2 py-1">{{room.difficulty}}</p>
             {% endif %}
           </div>
-          <a href="{% url "join_room" room.id %}" class="bg-orange-200 py-2 px-1 rounded">Join Room</a>
+          <div class="flex justify-between items-end">
+            <a href="{% url "join_room" room.id %}" class="bg-orange-200 py-2 px-1 rounded">Join Room</a>
+            <p class="text-xs">{{room.created_at}}</p>
+          </div>
         </div>
       {% endfor %}
       {% else %}
@@ -43,7 +46,10 @@
               <p class="rounded-full bg-red-500 inline-block text-sm text-white px-2 py-1">{{room.difficulty}}</p>
             {% endif %}
           </div>
-          <a href="{% url "join_room" room.id %}" class="bg-orange-200 py-2 px-1 rounded">Join Room</a>
+          <div class="flex justify-between items-end">
+            <a href="{% url "join_room" room.id %}" class="bg-orange-200 py-2 px-1 rounded">Join Room</a>
+            <p class="text-xs">{{room.created_at}}</p>
+          </div>
         </div>
       {% endfor %}
       {% else %}
