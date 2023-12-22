@@ -26,7 +26,7 @@ services:
   
   celery-beat:
     build: .
-    command: celery -A app beat -l debug 
+    command: celery -A app beat -l debug --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
       - .:/app
     environment:

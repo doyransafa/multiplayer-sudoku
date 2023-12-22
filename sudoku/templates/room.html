@@ -1,138 +1,176 @@
-{% extends "base.html" %}
+{% extends "base.html" %} 
 {% block room %}
 
-  <div class="w-[80%] mx-auto bg-red-200 rounded-b-lg">
-    <p class="text-center pt-2 text-xl">{{room.user.username}}'s room: {{room.name}} ({{room.difficulty}})</p>
-    <div id="scoreboard" class="p-5 flex flex-row gap-3">
+<div class="pb-10">
+  <div class="max-w-[95%] lg:max-w-[80%] mx-auto bg-red-200 rounded-b-lg">
+    <p class="text-center pt-2 lg:text-xl">
+      {{room.user.username}}'s room: {{room.name}} ({{room.difficulty}})
+    </p>
+    <div id="scoreboard" class="p-2 flex flex-row gap-2">
       {% for user in all_boards %}
-        <div id="{{user.player.username}}-scoreboard" class="border-2 border-black rounded-lg px-10 py-5 bg-yellow-100">
-          {% if user.active %}
-            <p id="{{user.player.username}}-username" class="font-bold text-center text-xl">{{user.player.username}}</p>
-          {% else %}
-            <p id="{{user.player.username}}-username" class="font-bold text-center text-xl text-red-600">{{user.player.username}} <span class="text-xs"> <br>(Left the room)</span></p>
-          {% endif %}
-          <p class="text-center text-sm"><span id="{{user.player.username}}-score" class="text-4xl text-justify">{{user.score}}</span> points</p>
-        </div>
+      <div
+        id="{{user.player.username}}-scoreboard"
+        class="border-2 border-black rounded-lg px-4 py-2 bg-yellow-100"
+      >
+        {% if user.active %}
+        <p id="{{user.player.username}}-username" class="font-bold text-center lg:text-lg">
+          {{user.player.username}}
+        </p>
+        {% else %}
+        <p
+          id="{{user.player.username}}-username"
+          class="font-bold text-center text-red-600"
+        >
+          {{user.player.username}} <span class="text-xs"> <br />(Left the room)</span>
+        </p>
+        {% endif %}
+        <p class="text-center text-sm">
+          <span id="{{user.player.username}}-score" class="text-xl lg:text-2xl text-justify"
+            >{{user.score}}</span
+          >
+          points
+        </p>
+      </div>
       {% endfor %}
     </div>
   </div>
-
+  
   <div id="finished-banner">
     {% if room.status == 'finished' %}
-      <h1 class='text-2xl text-center py-5 bg-green-200 w-[80%] mx-auto rounded-lg'>Game is finished! The winner is {{room.winner.username}} </h1>
-    {% endif %} 
+    <h1
+      class="lg:text-2xl text-center py-2 lg:py-5 bg-green-200 w-[95%] lg:w-[80%] mx-auto rounded-lg"
+    >
+      Game is finished! The winner is {{room.winner.username}}
+    </h1>
+    {% endif %}
   </div>
   
-  <div class="flex mx-auto gap-5 mt-10 max-w-[90%]">  
-
-    <div id="chat" class="w-1/4">
-
-    <div class="flex flex-row h-full w-full overflow-x-hidden">
-      <div class="flex flex-col flex-auto h-full p-6">
-        <div
-          class="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-200 h-full p-4 max-w-[90%]"
-        >
-          <div class="flex flex-col h-full mb-4">
-            <div class="flex flex-col overflow-y-auto max-h-[450px]">
-              <div id="messages" class="flex flex-col gap-y-2">
-                
+  <div class="flex flex-col lg:flex-row mx-auto gap-5 mt-2 lg:mt-5 max-w-[95%] lg:max-w-[80%]">
+    <div id="sudoku" class="lg:w-2/4 w-full">
+      <div class="sudoku">
+        {% for row in board %} 
+        {% with forloop.counter0 as row_index %} 
+        {% if row_index|divisibleby:"3" %}
+        <div class="row third grid grid-cols-9 w-[95%] mx-auto">
+          {% elif forloop.last %}
+          <div class="row last grid grid-cols-9 w-[95%] mx-auto">
+            {% else %}
+            <div class="row grid grid-cols-9 w-[95%] mx-auto">
+              {% endif %} 
+              {% for tile in row %} {% with forloop.counter0 as col_index %}
+              {% if tile.value == "0" %} 
+              {% if tile.eligible_points != "9" %}
+              <div
+                id="{{row_index}}x{{col_index}}"
+                class="tile aspect-square bg-yellow-100 border-green-400 flex items-center justify-center text-2xl font-bold"
+                _="on click remove .bg-blue-300 from .bg-blue-300 then add .bg-blue-300 on me"
+              ></div>
+              {% else %}
+              <div
+                id="{{row_index}}x{{col_index}}"
+                class="tile aspect-square bg-red-100 border-green-400 flex items-center justify-center text-2xl font-bold"
+                _="on click remove .bg-blue-300 from .bg-blue-300 then add .bg-blue-300 on me"
+              ></div>
+              {% endif %} 
+              {% else %} 
+              {% if tile.solved_by_player == "1" %}
+              <div
+                id="{{row_index}}x{{col_index}}"
+                class="tile aspect-square bg-green-100 border-green-400 flex items-center justify-center text-2xl font-bold"
+                _="on click remove .bg-blue-300 from .bg-blue-300 then add .bg-blue-300 on me"
+              >
+                {{tile.value}}
+              </div>
+              {% else %}
+              <div
+                id="{{row_index}}x{{col_index}}"
+                class="tile aspect-square bg-slate-300 border-green-400 flex items-center justify-center text-2xl"
+                _="on click remove .bg-blue-300 from .bg-blue-300 then add .bg-blue-300 on me"
+              >
+                {{tile.value}}
+              </div>
+              {% endif %} {% endif %} {% endwith %} {% endfor %} {% endwith %}
+            </div>
+            {% endfor %}
+          </div>
+  
+          <div class="grid grid-cols-9 w-[95%] mx-auto mt-2 gap-2">
+            {% for number in '123456789' %} {% if room.status == 'finished' %}
+            <button
+              disabled
+              id="button{{number}}"
+              class="button aspect-square disabled hover:cursor-not-allowed border-2 rounded lg:text-xl"
+            >
+              {{number}}
+            </button>
+            {% else %}
+            <button
+              id="button{{number}}"
+              class="button aspect-square bg-orange-200 hover:cursor-pointer border-2 border-gray-400 rounded lg:text-xl"
+            >
+              {{number}}
+            </button>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
+  
+        <div id="chat" class="lg:w-2/4 w-full">
+          <div class="flex flex-row h-full w-full overflow-x-hidden">
+            <div class="flex flex-col flex-auto h-full p-2">
+              <div
+                class="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-200 h-full p-4"
+              >
+                <div class="flex flex-col h-full mb-4">
+                  <div class="flex flex-col overflow-y-auto h-[450px]">
+                    <div id="messages" class="flex flex-col gap-y-2"></div>
+                  </div>
+                </div>
+                <div
+                  class="flex flex-row items-center h-16 rounded-xl bg-white w-full px-4"
+                >
+                  <form id="form" action="" class="flex flex-grow">
+                    <div class="flex-grow ml-4">
+                      <div class="relative w-full">
+                        <input
+                          type="text"
+                          name="message"
+                          class="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
+                        />
+                      </div>
+                    </div>
+                    <div class="ml-4">
+                      <button
+                        type="submit"
+                        class="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-2 flex-shrink-0"
+                      >
+                        <span>Send</span>
+                        <span class="ml-2">
+                          <svg
+                            class="w-4 h-4 transform rotate-45 -mt-px"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                            ></path>
+                          </svg>
+                        </span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
-          <div
-            class="flex flex-row items-center h-16 rounded-xl bg-white w-full px-4"
-          >
-            <form id="form" action="" class="flex flex-grow">
-
-              <div class="flex-grow ml-4">
-                <div class="relative w-full">
-                  <input
-                    type="text" name="message"
-                    class="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
-                  />
-                </div>
-              </div>
-              <div class="ml-4">
-                <button type="submit"
-                  class="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-2 flex-shrink-0"
-                >
-                  <span>Send</span>
-                  <span class="ml-2">
-                    <svg
-                      class="w-4 h-4 transform rotate-45 -mt-px"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                      ></path>
-                    </svg>
-                  </span>
-                </button>
-              </div>
-
-            </form>
-          </div>
         </div>
       </div>
     </div>
-
-    </div>
-
-    <div id="sudoku" class="w-2/4">
-      <div class="sudoku">
-        {% for row in board %}
-        {% with forloop.counter0 as row_index %}
-          {% if row_index|divisibleby:"3" %} 
-          <div class="row third flex">
-          {% elif forloop.last %}
-          <div class="row last flex">
-          {% else %}
-          <div class="row flex">
-          {% endif %}
-            {% for tile in row %}
-              {% with forloop.counter0 as col_index %}
-                {% if tile.value == "0" %}
-                  {% if tile.eligible_points != "9" %}
-                    <div id="{{row_index}}x{{col_index}}" class="tile bg-yellow-100 w-16 h-16 border-green-400 flex items-center justify-center text-2xl font-bold" _="on click remove .border-4 from .border-4 then add .border-4 on me"></div>
-                  {% else %}
-                    <div id="{{row_index}}x{{col_index}}" class="tile bg-red-100 w-16 h-16 border-green-400 flex items-center justify-center text-2xl font-bold" _="on click remove .border-4 from .border-4 then add .border-4 on me"></div>
-                    {% endif %}
-                {% else %}
-                  {% if tile.solved_by_player == "1" %}
-                    <div id="{{row_index}}x{{col_index}}" class="tile bg-green-100 w-16 h-16 border-green-400 flex items-center justify-center text-2xl font-bold" _="on click remove .border-4 from .border-4 then add .border-4 on me">{{tile.value}}</div>
-                  {% else %}
-                    <div id="{{row_index}}x{{col_index}}" class="tile bg-slate-300 w-16 h-16 border-green-400 flex items-center justify-center text-2xl" _="on click remove .border-4 from .border-4 then add .border-4 on me">{{tile.value}}</div>
-                  {% endif %}
-                {% endif %}
-              {% endwith %}
-            {% endfor %}
-          {% endwith %}
-        </div>
-        {% endfor %}
-      </div>
-
-      {% for number in '123456789' %}
-        
-      {% if room.status == 'finished' %}
-        <button disabled id='button{{number}}' class='button mt-3 mr-1 w-14 h-14 disabled hover:cursor-not-allowed border-2 rounded' >{{number}}</button>
-      {% else %}
-        <button id='button{{number}}' class='button mt-3 mr-1 w-14 h-14 bg-green-100 hover:cursor-pointer border-2 border-gray-400 rounded' >{{number}}</button>
-      {% endif %}
-
-      {% endfor %}
-    </div>
-
-    <div class="w-1/4" >
-      <div id="updates" class="flex flex-col gap-3 max-h-[650px] overflow-y-auto">
-      </div>
-    </div>
-
   </div>
+</div>
 
 {% endblock room %}

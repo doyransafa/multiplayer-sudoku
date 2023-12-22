@@ -9,10 +9,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0_x5d)w9)+dg0vhfri8cqhvmgji@*jf_5^30ird=)(1aqupkvq'
+SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -20,14 +20,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    #third_party
+    #third_party_prio
     'channels',
     'daphne',
-    'crispy_forms',
-    'crispy_tailwind',
-    'django_extensions',
-    #own
-    'sudoku',
     #django
     'django.contrib.admin',
     'django.contrib.auth',
@@ -35,6 +30,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #third_party_secondary
+    'crispy_forms',
+    'crispy_tailwind',
+    'django_extensions',
+    'django_celery_beat',
+    #own
+    'sudoku',
 ]
 
 MIDDLEWARE = [
@@ -103,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Istanbul'
 
 USE_I18N = True
 
@@ -139,3 +141,6 @@ LOGIN_REDIRECT_URL = '/'
 # Celery
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://redis:6379/0')
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://redis:6379/0')
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True

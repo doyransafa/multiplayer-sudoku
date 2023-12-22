@@ -8,8 +8,9 @@ from celery.schedules import crontab
 logger = get_task_logger(__name__)
 
 
-@shared_task
+@app.task
 def add(x, y):
+  logger.info('Added numbers')
   return x + y
 
 
@@ -19,21 +20,10 @@ def bos():
 
 
 @shared_task
-def xsum(numbers):
-  return sum(numbers)
-
-
-@app.task
-def delete_old_rooms():
-  time_treshold = datetime.now() - timedelta(minutes=1)
-  old_rooms = Room.objects.filter(created_at__time__lt=time_treshold)
-  old_rooms.delete()
-  logger.info(f'{old_rooms.count()} rooms deleted!')
-
-@app.on_after_finalize.connect
-def setup_periodic_tasks(sender, **kwargs):
-  
-  sender.add_periodic_task(crontab(minute="*/1"), delete_old_rooms.s(), name='Delete rooms older than a minute')
-
-  # sender.add_periodic_task(timedelta(second=30), add.s(2,3), name='add 3 to 2 every 30 seconds')
-
+def delete_room_after_24_hours(room_code):
+  try:
+    room = Room.objects.get(id=room_code)
+    room.delete()
+    logger.info('DELETED ROOOM')
+  except Room.DoesNotExist:
+    logger.info('NO ROOOM')

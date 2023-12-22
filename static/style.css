@@ -4,18 +4,18 @@
 }
 
 .tile:first-child {
-  border-left: solid;
+  border-left: solid 4px;
 }
 
 .tile:nth-child(3n) {
-  border-right: solid;
+  border-right: solid 4px;
 }
 
 
 .third .tile {
-  border-top: solid;
+  border-top: solid 4px;
 }
 
 .last .tile {
-  border-bottom: solid;
+  border-bottom: solid 4px;
 }

@@ -13,3 +13,6 @@ urlpatterns = [
     path('register/', views.RegistrationView.as_view(), name='register'),
 
 ]
+
+
+

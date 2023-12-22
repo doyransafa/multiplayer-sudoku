@@ -1,7 +1,7 @@
 let pathNameArray = window.location.pathname.split("/")
 let roomName = pathNameArray[pathNameArray.length - 1]
 let socketUrl = `ws://${window.location.host}/ws/room/${roomName}`
-const updatesContainer = document.getElementById('updates')
+const updatesContainer = document.getElementById('messages')
 const currentUser = document.getElementById('current-user')
 const buttons = document.querySelectorAll(".button")
 const finishedBanner = document.getElementById("finished-banner")
@@ -30,19 +30,17 @@ chatSocket.onmessage = (e) => {
 
 	if (type == "chat_message") {
 		let messages = document.getElementById("messages")
-		messages.insertAdjacentHTML("afterbegin", 
-		`
-			<div class="justify-start p-3 rounded-l flex-grow-0">
-				<div class="flex items-center">
-					<div class="mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl flex-grow-0">
-						<div>
-							<p class="font-bold mb-1">${data.username}</p>
-							${data.message}
-						</div>
+		messages.insertAdjacentHTML(
+			"afterbegin",
+			`
+			<div class="flex items-start">
+				<div class="mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
+					<div>
+						[CHAT] <span class="font-bold">${data.username}</span> ${data.message}
 					</div>
 				</div>
 			</div>
-		`
+		`,
 		)
 
 	} else if (type == "player_exited") {
@@ -109,7 +107,7 @@ chatSocket.onmessage = (e) => {
 
 buttons.forEach(button => {
   button.addEventListener('click', async (e) => {
-    let selected = document.querySelector('.border-4')
+    let selected = document.querySelector('.bg-blue-300')
     
     if (selected != null) {
       tileId = selected.id
@@ -120,10 +118,18 @@ buttons.forEach(button => {
 
       if (result.result == true){
 				selected.innerHTML = e.target.innerHTML
-				selected.classList.remove('bg-red-100', 'bg-yellow-100')
+				selected.classList.remove('bg-red-100', 'bg-yellow-100', 'bg-blue-300')
 				selected.classList.add('bg-green-100')
       } else if (result.result == false) {
-				window.alert('That\'s wrong you lose 10 points for that!')
+				finishedBanner.innerHTML = ""
+				finishedBanner.insertAdjacentHTML(
+					"afterbegin",
+					`<h1 id='${tileId}-guess' class='lg:text-2xl text-center text-white mt-1 py-2 bg-red-500 w-[95%] lg:w-[80%] mx-auto rounded-lg'>That\'s wrong you lose 10 points for that!</h1>`,
+				)
+				setTimeout(() => {
+					let notification = document.getElementById(`${tileId}-guess`)
+					finishedBanner.innerHTML= ''
+				}, 3000)
       }
 			chatSocket.send(JSON.stringify({
 				'type' : 'guess',

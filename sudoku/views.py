@@ -1,6 +1,7 @@
 import random
+import json
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -13,6 +14,8 @@ from .models import Board, Puzzle, Room, User
 from .forms import RoomCreateForm
 
 from . import sudoku
+
+from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
 @login_required(login_url="/login/")
 def home(request):
@@ -47,7 +50,11 @@ def create_room(request):
       
       room.generate_eligible_points()
       room.save(update_fields=['eligible_points'])
-      
+
+      interval, _ = IntervalSchedule.objects.get_or_create(every=24, period=IntervalSchedule.HOURS)
+
+      delete_task = PeriodicTask.objects.create(name=f'{unique_code}-delete-task', interval=interval, task='sudoku.tasks.delete_room_after_24_hours' , args=json.dumps([unique_code]), one_off=True)
+
       return redirect(f'/room/{unique_code}')
   else:
     form = RoomCreateForm()
@@ -59,7 +66,7 @@ def create_room(request):
 @login_required(login_url="/login/")
 def join_room(request, room_name):
 
-  room = Room.objects.get(id = room_name)
+  room = get_object_or_404(Room, id = room_name)
   board = room.puzzle.puzzle
 
   board_obj, created = Board.objects.get_or_create(player = request.user, room=room)
@@ -125,8 +132,6 @@ def check_tile(request, room_name, col, row, value):
     'tiles_left' : board.tiles_left,
   }
 
-  print(response)
-
   return JsonResponse(response)
 
 
@@ -147,3 +152,12 @@ class RegistrationView(FormView):
     user = form.save()
     login(self.request, user)
     return super().form_valid(form)
+
+
+#Error pages
+
+def error_404(request, exception):
+  return render(request, 'error_pages/404.html', status=404)
+
+def error_500(request):
+  return render(request, 'error_pages/500.html')

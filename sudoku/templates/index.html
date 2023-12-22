@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 {% block home %}
-<div class="w-[70%] mx-auto">
+<div class="w-[95%] lg:w-[70%] mx-auto">
   
   <p class="text-center mt-7"><a href="{%url 'create_room' %}" class="bg-green-500 py-5 px-3 rounded-full text-white">Create New Room</a></p>
 
-  <div class="w-fit mx-auto mt-10 flex gap-10">
+  <div class="w-full mx-auto mt-10 flex flex-col lg:flex-row gap-10">
 
-    <div>
+    <div class="lg:w-1/2">
       <h1>Active Public Rooms:</h1>
       {% if public_rooms %}
       {% for room in public_rooms %}
-        <div class="w-[450px] border-2 border-sky-500 mb-3 p-4 rounded-lg">
+        <div class="w-[95%] border-2 border-sky-500 mb-3 p-4 rounded-lg">
           <div class="flex justify-between mb-5">
             <p class="font-bold text-lg">{{room.name}} <span class="text-xs font-normal">({{room.user.username}})</span></p>
             {% if room.difficulty == 'easy' %}
@@ -31,11 +31,11 @@
       There are no games right now!
       {% endif %}
     </div>
-    <div>
+    <div class="lg:w-1/2">
       <h1>Your Ongoing Games:</h1>
       {% if active_rooms %}
       {% for room in active_rooms %}
-        <div class="w-[450px] border-2 border-sky-500 mb-3 p-4 rounded-lg">
+        <div class="w-[95%] border-2 border-sky-500 mb-3 p-4 rounded-lg">
           <div class="flex justify-between mb-5">
             <p class="font-bold text-lg">{{room.name}} <span class="text-xs font-normal">({{room.user.username}})</span></p>
             {% if room.difficulty == 'easy' %}
