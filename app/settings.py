@@ -19,7 +19,8 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 DEBUG = bool(config('DJANGO_DEBUG', 0))
 
 ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS").split(",")
-# CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS").split(" ")
+CSRF_TRUSTED_ORIGINS = ['http://localhost:1337']
+# CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
 
 # Application definition
 
