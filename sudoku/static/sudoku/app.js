@@ -112,23 +112,23 @@ buttons.forEach(button => {
     if (selected != null) {
       tileId = selected.id
       let [col, row] = tileId.split('x')
-      tileCheckUrl = `http://${window.location.host}/check_tile/${roomName}/${col}/${row}/${e.target.innerHTML}`
+      tileCheckUrl = `http://${window.location.host}/check_tile/${roomName}/${col}/${row}/${e.target.innerText}`
       const response = await fetch(tileCheckUrl);
       const result = await response.json();
 
       if (result.result == true){
-				selected.innerHTML = e.target.innerHTML
+				selected.innerText = e.target.innerText
 				selected.classList.remove('bg-red-100', 'bg-yellow-100', 'bg-blue-300')
 				selected.classList.add('bg-green-100')
       } else if (result.result == false) {
-				finishedBanner.innerHTML = ""
+				finishedBanner.innerText = ""
 				finishedBanner.insertAdjacentHTML(
 					"afterbegin",
 					`<h1 id='${tileId}-guess' class='lg:text-2xl text-center text-white mt-1 py-2 bg-red-500 w-[95%] lg:w-[80%] mx-auto rounded-lg'>That\'s wrong you lose 10 points for that!</h1>`,
 				)
 				setTimeout(() => {
 					let notification = document.getElementById(`${tileId}-guess`)
-					finishedBanner.innerHTML= ''
+					finishedBanner.innerText= ''
 				}, 3000)
       }
 			chatSocket.send(JSON.stringify({

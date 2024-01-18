@@ -40,7 +40,7 @@ def create_room(request):
     if form.is_valid():
       selected_difficulty = form.cleaned_data['difficulty']
       puzzles = Puzzle.objects.filter(difficulty=selected_difficulty)
-      random_index = random.randint(0, puzzles.count())
+      random_index = random.randint(0, puzzles.count() - 1)
       random_puzzle = puzzles[random_index]
       room = form.save(commit=False)
       room.user = request.user

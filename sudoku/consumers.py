@@ -3,12 +3,12 @@ import random
 import string
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
-from .models import Room, Board
+
 
 class RoomConsumer(WebsocketConsumer):
     
   def connect(self):
-
+    from .models import Room, Board
     self.room_group_name = self.scope['url_route']['kwargs']['room_name']
     self.user = self.scope.get('user')
     self.player_board = Board.objects.get(player = self.user, room__id=self.room_group_name) 
@@ -34,7 +34,7 @@ class RoomConsumer(WebsocketConsumer):
     self.accept()
   
   def disconnect(self, code):
-
+    from .models import Board
     self.user = self.scope.get('user')
     self.player_board = Board.objects.get(player = self.user, room__id=self.room_group_name)
     self.player_board.active = False

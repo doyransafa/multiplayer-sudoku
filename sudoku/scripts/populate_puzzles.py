@@ -3,7 +3,7 @@ from ..models import Puzzle
 
 def run():
 
-  with open('./puzzles.csv', 'r') as file:
+  with open('./puzzles-test.csv', 'r') as file:
     
     csvreader = csv.reader(file)
     header = next(csvreader)

@@ -1,21 +1,25 @@
 import os
 from pathlib import Path
+# from dotenv import load_dotenv
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load variables from .env file into the environment
+# load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = bool(config('DJANGO_DEBUG', 0))
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS").split(",")
+# CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS").split(" ")
 
 # Application definition
 
@@ -75,8 +79,13 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': config('POSTGRES_ENGINE'),
+        'NAME': config('POSTGRES_DATABASE'),
+        'USER': config('POSTGRES_USER'),
+        'PASSWORD': config('POSTGRES_PASSWORD'),
+        'HOST': config('POSTGRES_HOST'),
+        'PORT': config('POSTGRES_PORT'),
+
     }
 }
 
@@ -115,7 +124,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -126,9 +135,12 @@ ASGI_APPLICATION = "app.asgi.application"
 
 # Django Channels
 CHANNEL_LAYERS = {
-    'default' : {
-        'BACKEND' : 'channels.layers.InMemoryChannelLayer'
-    }
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
 }
 
 # Crispy Forms
@@ -139,8 +151,11 @@ LOGOUT_REDIRECT_URL = '/login'
 LOGIN_REDIRECT_URL = '/'
 
 # Celery
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://redis:6379/0')
-CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://redis:6379/0')
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', 'redis://redis:6379/0')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', 'redis://redis:6379/0')
+CELERY_BEAT_SCHEDULER = config('CELERY_BEAT_SCHEDULER')
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

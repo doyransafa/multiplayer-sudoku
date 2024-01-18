@@ -8,14 +8,14 @@
   <title>Document</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
-  <link rel="stylesheet" href="{%static 'style.css'%}">
+  <link rel="stylesheet" href="{%static 'sudoku/style.css'%}">
 </head>
 <body>
 
   <nav class="bg-orange-300 sticky top-0"> 
     <div class="w-[78%] h-14 mx-auto flex justify-between items-center">
       <a href="{%url 'home'%}" class="font-bold">Home</a>
-      <p class="invisible md:visible text-2xl">Multiplayer Sudoku</p>
+      <p class="invisible md:visible text-2xl">Multiplayer? Sudoku</p>
       <div class="flex gap-2">
         <p id="current-user">{{request.user.username}}</p>
         <a href="{%url 'logout'%}" class="font-bold">Logout</a>
@@ -31,6 +31,6 @@
   {% block 404 %}{% endblock 404 %}
   {% block 500 %}{% endblock 500 %}
 
-<script src="{% static 'app.js' %}"></script>
+<script src="{% static 'sudoku/app.js' %}"></script>
 </body>
 </html>

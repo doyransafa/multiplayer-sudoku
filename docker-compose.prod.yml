@@ -1,43 +1,47 @@
 services:
-  
+
   redis:
     image: redis:7.2.3-alpine
-    container_name: redis
-  
+
   db:
     image: postgres:12.17-alpine3.19
     restart: always
     volumes:
-      - postgres-data:/var/lib/postgres/data/
-    environment:
-      - POSTGRES_USER=postgres_user_test
-      - POSTGRES_PASSWORD=postgres_password_test
-      - POSTGRES_DB=postgres_db_test
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.prod.db
     depends_on:
       - redis
-
+  
   django:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     command: >
             bash -c " python3 manage.py createsuperuser --noinput &&
             python3 manage.py runscript populate_puzzles &&
-            python3 manage.py runserver 0.0.0.0:8000 "
+            python3 manage.py collectstatic --no-input --clear &&
+            daphne -b 0.0.0.0 -p 8000 app.asgi:application"
+    # command: >
+    #         bash -c "python3 manage.py createsuperuser --noinput &&
+    #         python3 manage.py runscript populate_puzzles &&
+    #         daphne -b 0.0.0.0 -p 8000 app.asgi:application"
     volumes:
-      - .:/usr/src/app
-    ports: 
-      - 8000:8000
+      - static_volume:/home/app/web/staticfiles
+    expose:
+      - 8000
     env_file:
-      - ./.env.dev
+      - ./.env.prod
     depends_on:
       - db
-
+  
   celery:
     build: .
     entrypoint: bash -c "./wait_for_migrations.sh && celery -A app worker -l info"
     volumes:
       - .:/usr/src/app
     env_file:
-      - ./.env.dev
+      - ./.env.prod
     depends_on:
       - django
   
@@ -47,7 +51,7 @@ services:
     volumes:
       - .:/usr/src/app
     env_file:
-      - ./.env.dev
+      - ./.env.prod
     depends_on:
       - django
     environment:
@@ -55,6 +59,17 @@ services:
       - POSTGRES_PASSWORD=postgres_password_test
       - POSTGRES_DB=postgres_db_test
 
+  nginx:
+    restart: always
+    build: ./nginx
+    ports:
+      - 1337:80
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+    depends_on:
+      - django
+
 
 volumes:
-  postgres-data:
+  postgres_data:
+  static_volume:
