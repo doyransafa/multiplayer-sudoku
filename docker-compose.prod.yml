@@ -14,9 +14,7 @@ services:
       - redis
   
   django:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
+    image: doyransafa/django-sudoku-deploy
     command: >
             bash -c " python3 manage.py createsuperuser --noinput &&
             python3 manage.py runscript populate_puzzles &&
@@ -36,7 +34,7 @@ services:
       - db
   
   celery:
-    build: .
+    image: doyransafa/sudoku-celery
     entrypoint: bash -c "./wait_for_migrations.sh && celery -A app worker -l info"
     volumes:
       - .:/usr/src/app
@@ -46,7 +44,7 @@ services:
       - django
   
   celery-beat:
-    build: .
+    image: doyransafa/sudoku-celery-beat
     entrypoint: bash -c "./wait_for_migrations.sh && celery -A app beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
     volumes:
       - .:/usr/src/app
@@ -61,7 +59,7 @@ services:
 
   nginx:
     restart: always
-    build: ./nginx
+    image: doyransafa/sudoku-nginx
     ports:
       - 1337:80
     volumes:

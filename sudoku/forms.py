@@ -1,6 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import Room, User
+from .models import Room, Username
 
 class RoomCreateForm(forms.ModelForm):
   DIFFICULTY_CHOICES = [
@@ -20,8 +19,8 @@ class RoomCreateForm(forms.ModelForm):
     fields = ['name','difficulty', 'private']
   
 
-class RegistrationForm(UserCreationForm):
+class RegistrationForm(forms.ModelForm):
 
-    class Meta:
-        model = User
-        fields = ['username','email']
+  class Meta:
+    model = Username
+    fields = ['username']

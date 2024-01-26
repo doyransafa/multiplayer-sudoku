@@ -19,7 +19,7 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 DEBUG = bool(config('DJANGO_DEBUG', 0))
 
 ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS").split(",")
-CSRF_TRUSTED_ORIGINS = ['http://localhost:1337']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:1337', 'http://18.153.90.245:1337']
 # CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
 
 # Application definition
@@ -80,12 +80,12 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': config('POSTGRES_ENGINE'),
-        'NAME': config('POSTGRES_DATABASE'),
-        'USER': config('POSTGRES_USER'),
-        'PASSWORD': config('POSTGRES_PASSWORD'),
-        'HOST': config('POSTGRES_HOST'),
-        'PORT': config('POSTGRES_PORT'),
+        'ENGINE': config('POSTGRES_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': config('POSTGRES_DATABASE', 'db'),
+        'USER': config('POSTGRES_USER',''),
+        'PASSWORD': config('POSTGRES_PASSWORD',''),
+        'HOST': config('POSTGRES_HOST',''),
+        'PORT': config('POSTGRES_PORT',''),
 
     }
 }
@@ -150,13 +150,16 @@ CRISPY_TEMPLATE_PACK = "tailwind"
 # Custom
 LOGOUT_REDIRECT_URL = '/login'
 LOGIN_REDIRECT_URL = '/'
+# Custom
+AUTH_USER_MODEL = "sudoku.Username"
+
 
 # Celery
 CELERY_BROKER_URL = config('CELERY_BROKER_URL', 'redis://redis:6379/0')
 CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', 'redis://redis:6379/0')
 CELERY_BEAT_SCHEDULER = config('CELERY_BEAT_SCHEDULER')
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

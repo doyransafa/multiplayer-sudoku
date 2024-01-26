@@ -17,7 +17,7 @@ from . import sudoku
 
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
-@login_required(login_url="/login/")
+@login_required(login_url="/register/")
 def home(request):
 
   public_rooms = Room.objects.filter(private=False, status='ongoing')
@@ -31,7 +31,7 @@ def home(request):
   return render(request, 'index.html', context)
 
 
-@login_required(login_url="/login/")
+@login_required(login_url="/register/")
 def create_room(request):
 
   if request.method == 'POST':
@@ -63,7 +63,7 @@ def create_room(request):
 
   return render(request, 'create_room.html', context)
 
-@login_required(login_url="/login/")
+@login_required(login_url="/register/")
 def join_room(request, room_name):
 
   room = get_object_or_404(Room, id = room_name)
@@ -151,7 +151,12 @@ class RegistrationView(FormView):
   def form_valid(self, form):
     user = form.save()
     login(self.request, user)
-    return super().form_valid(form)
+
+    next_url = self.request.GET.get('next', None)
+    if next_url:
+      return redirect(next_url)
+    else:
+      return super().form_valid(form)
 
 
 #Error pages
